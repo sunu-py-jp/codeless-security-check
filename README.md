@@ -1,4 +1,4 @@
-# security-check
+# codeless-security-check
 
 Security audit skill for Claude Code. Evaluates skills and MCP servers for vulnerabilities before installation.
 
@@ -26,7 +26,7 @@ Why codeless?
 ## Structure
 
 ```
-security-check/
+codeless-security-check/
   SKILL.md              # 6-step workflow
   references/
     skill-checklist.md   # Checklist for .skill packages
@@ -37,13 +37,13 @@ security-check/
 ## Install
 
 ```bash
-npx skills add sunu-py-jp/security-check-skill --skill security-check
+npx skills add sunu-py-jp/codeless-security-check --skill codeless-security-check
 ```
 
 Or manually:
 
 ```bash
-cp -r security-check ~/.claude/skills/
+cp -r codeless-security-check ~/.claude/skills/
 ```
 
 ## Usage

@@ -1,5 +1,5 @@
 ---
-name: security-check
+name: codeless-security-check
 description: "Security audit for Claude Code skills (.skill packages) and MCP servers. Detect malicious code, data exfiltration, prompt injection, and excessive permissions before installation. Use when the user asks to check security, audit this skill/MCP, is this safe to install, review for vulnerabilities, セキュリティチェック, 安全性を確認, or any request to evaluate the safety of a skill or MCP server before use. Also trigger when user mentions installing a skill, adding an MCP server, or shares a .skill file or MCP repository for review."
 ---
 
