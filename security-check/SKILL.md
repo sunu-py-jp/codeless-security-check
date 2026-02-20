@@ -9,7 +9,26 @@ Evaluate skills and MCP servers for security vulnerabilities and malicious code 
 
 ## Workflow
 
-### 1. Determine Target Type
+### 1. Verify Author Trustworthiness
+
+If the target is a GitHub repository, run the following to assess the author's credibility:
+
+```bash
+gh api users/{owner} --jq '{login, created_at, public_repos, followers}'
+gh api repos/{owner}/{repo} --jq '{stargazers_count, forks_count, open_issues_count, license: .license.spdx_id, created_at, pushed_at}'
+```
+
+Evaluate:
+- **Account age**: Created less than 6 months ago → Warning
+- **Activity**: Low followers (<5) with low public repos (<3) → Warning
+- **Repo signals**: No license, no stars, no forks, single commit → Warning
+- **Known publishers**: Microsoft, Google, Anthropic, Vercel, etc. → trusted baseline
+
+Include the trust assessment in the report's Info section. If multiple author warnings overlap, escalate to Warning level in the report.
+
+Skip this step for local-only targets without a repository origin.
+
+### 2. Determine Target Type
 
 Identify whether the target is a **Skill** or **MCP server**:
 
@@ -22,7 +41,7 @@ If a `.skill` file is provided, extract it first:
 unzip <file>.skill -d /tmp/skill-review/
 ```
 
-### 2. Inventory All Files
+### 3. Inventory All Files
 
 List every file in the target. Categorize by risk level:
 
@@ -35,7 +54,7 @@ List every file in the target. Categorize by risk level:
 
 Read and analyze **all** Critical and High risk files. Scan Medium risk files for injection patterns.
 
-### 3. Run Security Checks
+### 4. Run Security Checks
 
 Load the appropriate checklist based on target type:
 
@@ -46,7 +65,20 @@ For both types, also reference [references/threat-patterns.md](references/threat
 
 Evaluate every item in the checklist. Do not skip items.
 
-### 4. Output Report
+### 5. Cross-Correlation Analysis
+
+After completing individual checks, apply these escalation rules. When multiple findings co-occur, the combined risk is greater than each finding alone:
+
+| Finding A | Finding B | Same file? | Escalate to |
+|-----------|-----------|------------|-------------|
+| Sensitive data access (`.env`, `.ssh/`, credentials) | Network communication (`fetch`, `requests`, `curl`) | Yes | **Critical** — probable data exfiltration |
+| Sensitive data access | Network communication | No | **Warning** — potential exfiltration pathway |
+| Dynamic code execution (`eval`, `exec`) | Obfuscated payload (base64, hex) | Yes | **Critical** — probable malicious execution |
+| Prompt injection pattern | Hidden instructions (HTML comments, zero-width chars) | Yes | **Critical** — deliberate concealment |
+| Broad file access (no path restriction) | Network communication | Either | **Warning** — arbitrary file exfiltration risk |
+| Low author trust (Step 1) | Any Warning-level finding | N/A | **Escalate Warning → Critical** |
+
+### 6. Output Report
 
 Output a structured security report in the following format:
 
@@ -55,6 +87,12 @@ Output a structured security report in the following format:
 
 **Target**: [name and type]
 **Risk Level**: SAFE / CAUTION / DANGER
+
+### Author Trust
+- **Publisher**: [name / organization]
+- **Account age**: [duration]
+- **Signals**: [stars, forks, followers, license]
+- **Assessment**: Trusted / Neutral / Low trust
 
 ### Summary
 [1-2 sentence overall assessment]
@@ -69,6 +107,9 @@ Output a structured security report in the following format:
 
 #### Info (notes)
 - [finding]
+
+### Cross-Correlation
+[List any escalations triggered by combined findings, or "No escalations"]
 
 ### File Analysis
 | File | Risk | Status | Notes |
