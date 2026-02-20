@@ -1,5 +1,7 @@
 # codeless-security-check
 
+English | [日本語](docs/README_ja.md) | [한국어](docs/README_ko.md) | [中文](docs/README_zh.md)
+
 Security audit skill for Claude Code. Evaluates skills and MCP servers for vulnerabilities before installation.
 
 ## What it checks
@@ -37,7 +39,7 @@ codeless-security-check/
 ## Install
 
 ```bash
-npx skills add sunu-py-jp/codeless-security-check --skill codeless-security-check
+npx skills add https://github.com/sunu-py-jp/codeless-security-check --skill codeless-security-check
 ```
 
 Or manually:
@@ -53,6 +55,19 @@ Ask Claude Code:
 - "Check the security of this skill: ~/.claude/skills/some-skill"
 - "Is this MCP server safe? https://github.com/org/some-mcp"
 - "Review this .skill file for vulnerabilities"
+
+## Examples
+
+See [EXAMPLES.md](docs/EXAMPLES.md) for real-world audit results:
+
+| Target | Type | Risk Level |
+|--------|------|------------|
+| [anthropics/skills — frontend-design](https://github.com/anthropics/skills) | Skill | SAFE |
+| [sunu-py-jp/X-Twitter-MCP](https://github.com/sunu-py-jp/X-Twitter-MCP) | MCP Server | CAUTION |
+| [tumf/mcp-shell-server](https://github.com/tumf/mcp-shell-server) | MCP Server | CAUTION |
+| [mark3labs/mcp-filesystem-server](https://github.com/mark3labs/mcp-filesystem-server) | MCP Server | SAFE |
+| [daymade/claude-code-skills](https://github.com/daymade/claude-code-skills) | Skill Collection | CAUTION |
+| [alirezarezvani/claude-skills](https://github.com/alirezarezvani/claude-skills) | Skill Collection | CAUTION |
 
 ## License
 
